@@ -55,12 +55,14 @@ class Projectile {
   // https://processing.org/examples/forceswithvectors.html
   PVector calculateDrag(float AIR_DENSITY) {
     float speed = velocity.mag();
+    //println("s:", speed);
     float dragMagnitude = (DRAG_COEFFICIENT * speed * speed)/AIR_DENSITY;
     //float dragMagnitude = (AIR_DENSITY * speed * speed * DRAG_COEFFICIENT * area) / 2;
     
     PVector drag = velocity.copy();
     drag.mult(-1);
     drag.setMag(dragMagnitude);
+    //println("d:",drag);
     return drag;
   }
   
@@ -77,11 +79,13 @@ class Projectile {
     applyForce(calculateDrag(AIR_DENSITY));
     PVector gravity = new PVector(0, 0.1*mass);
     applyForce(gravity);
+    //println("a:",acceleration);
+    //println("v:",velocity);
    
     velocity.add(acceleration);
     position.add(velocity);
     
     acceleration.mult(0);
-    return position.y >= 0;
+    return position.y <= displayHeight;
   }  
 }

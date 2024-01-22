@@ -5,6 +5,7 @@ final class Ballista {
   final color TRAJECTORY_COLOUR = #272525;
   final int TRAJECTORY_LINE_WEIGHT = 2;
   final int TRAJECTORY_DISPLAY_HEIGHT = displayHeight/2;
+  final int PROJECTILE_MASS = 10;
   PVector drawPosition;
   PVector launchPosition;
   int width, height;
@@ -16,10 +17,19 @@ final class Ballista {
     this.width = width;
     this.height = height;
   }
+  PlayerMissile fire(PVector crossHairPos) {
+    float adjacent = (crossHairPos.x - launchPosition.x);
+    float opposite = abs(constrain(crossHairPos.y, displayHeight - TRAJECTORY_DISPLAY_HEIGHT, displayHeight - height) - launchPosition.y);
+    //int angle = Math.round(atan(opposite/adjacent) * 180/PI);
+    //println(angle);
+    PVector velocity = new PVector(adjacent/10, opposite*-1/10);
+    PlayerMissile missile = new PlayerMissile((int)launchPosition.x, (int)launchPosition.y, projectileRadius, (int)velocity.x, (int)velocity.y, PROJECTILE_MASS);
+    return missile;
+  }
   void draw(PVector crossHairPos) {
     strokeWeight(TRAJECTORY_LINE_WEIGHT);
     stroke(TRAJECTORY_COLOUR);
-    line(launchPosition.x, launchPosition.y, crossHairPos.x, constrain(crossHairPos.y, displayHeight - TRAJECTORY_DISPLAY_HEIGHT, displayHeight));
+    line(launchPosition.x, launchPosition.y, crossHairPos.x, constrain(crossHairPos.y, displayHeight - TRAJECTORY_DISPLAY_HEIGHT, displayHeight - height));
    
     noStroke();
     ellipseMode(RADIUS);
