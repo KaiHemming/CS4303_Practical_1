@@ -1,7 +1,9 @@
-final class Object { 
+class Projectile { 
   final int TRAIL_STROKE_MULTIPLIER = 1; //Multiplies based on missileRadius
   final float DRAG_COEFFICIENT = 0.05;
   final int TRAJECTORY_UPDATE_FREQ = 5;
+  color trajectoryColour = #FFFFFF;
+  //color projectileColour =  TODO
   int trajectoryUpdateCount = 0;
   ArrayList<PVector> trajectory = new ArrayList<PVector>(); // For drawing trajectory line
   PVector position;
@@ -11,7 +13,8 @@ final class Object {
   int mass;
   float area;
   
-  Object(int x, int y, int missileRadius, int xVelocity, int yVelocity, int mass) {
+  
+  Projectile(int x, int y, int missileRadius, int xVelocity, int yVelocity, int mass) {
     position = new PVector(x, y);
     trajectory.add(position.copy());
     velocity = new PVector(xVelocity, yVelocity);
@@ -21,9 +24,13 @@ final class Object {
     this.area = 3 * missileRadius * missileRadius; //Aproximately
   }
   
+  void setTrajectoryColour(color colour) {
+    this.trajectoryColour = colour;
+  }
+  
   void draw() {
     strokeWeight(missileRadius * TRAIL_STROKE_MULTIPLIER);
-    stroke(#810000);
+    stroke(trajectoryColour);
     for (int i = 1; i < trajectory.size(); i++) {
       PVector startPos = trajectory.get(i);
       PVector endPos = trajectory.get(i-1);
@@ -57,6 +64,7 @@ final class Object {
     return drag;
   }
   
+  // https://processing.org/examples/forceswithvectors.html
   // A = F/M
   void applyForce(PVector force) {
     PVector a = PVector.div(force, mass);
@@ -64,7 +72,7 @@ final class Object {
   }
   
   // Returns true if not out of play area
-  boolean move(int GRAVITY, float AIR_DENSITY) {
+  boolean move(float AIR_DENSITY) {
     
     applyForce(calculateDrag(AIR_DENSITY));
     PVector gravity = new PVector(0, 0.1*mass);
