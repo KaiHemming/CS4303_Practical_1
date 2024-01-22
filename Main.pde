@@ -77,12 +77,19 @@ void draw() {
     }
   }
  }
- void mousePressed() {
-   playerMissiles.add(ballistas[selectedBallista].fire(crossHair.getPosition()));
- }
  void explodePlayerMissile() {
    if (playerMissiles.size() > 0) {
      playerMissiles.remove(0);
+   }
+ }
+ void mousePressed() {
+   if (mouseButton == LEFT) {
+     PlayerMissile playerMissile = ballistas[selectedBallista].fire(crossHair.getPosition());
+     if (playerMissile != null) {
+       playerMissiles.add(playerMissile);
+     }
+   } else if (mouseButton == RIGHT) {
+     explodePlayerMissile();
    }
  }
  void keyPressed() {
