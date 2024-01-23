@@ -97,30 +97,30 @@ void printWaveData() {
 }
 
 void update() {
-  ArrayList<Meteor> meteorsToRemove = new ArrayList<Meteor>();
-  ArrayList<Explosion> explosionsToAdd = new ArrayList<Explosion>();
+  //ArrayList<Meteor> meteorsToRemove = new ArrayList<Meteor>();
+  //ArrayList<Explosion> explosionsToAdd = new ArrayList<Explosion>();
   
-  for (Explosion explosion:explosions) {
-    if (!explosion.update()) {
-      explosions.remove(explosion);
-    } else {
-      ArrayList<Meteor> meteors = wave.getMeteors();
-      for (Meteor meteor:meteors) {
-        PVector meteorPosition = meteor.getPosition().copy();
-        if (explosion.isMeteorInRadius(meteor)) {
-          meteorsToRemove.add(meteor);
-          explosionsToAdd.add(new Explosion((int)meteorPosition.x, (int)meteorPosition.y));
-        }
-      }
-    }
-  }
+  //for (Explosion explosion:explosions) {
+  //  if (!explosion.update()) {
+  //    explosions.remove(explosion);
+  //  } else {
+  //    ArrayList<Meteor> meteors = wave.getMeteors();
+  //    for (Meteor meteor:meteors) {
+  //      PVector meteorPosition = meteor.getPosition().copy();
+  //      if (explosion.isMeteorInRadius(meteor)) {
+  //        meteorsToRemove.add(meteor);
+  //        explosionsToAdd.add(new Explosion((int)meteorPosition.x, (int)meteorPosition.y));
+  //      }
+  //    }
+  //  }
+  //}
   
-  for(Meteor meteor: meteorsToRemove) {
-    wave.removeMeteor(meteor);
-  }
-  for(Explosion explosion: explosionsToAdd) {
-    explosions.add(explosion);
-  }
+  //for(Meteor meteor: meteorsToRemove) {
+  //  wave.removeMeteor(meteor);
+  //}
+  //for(Explosion explosion: explosionsToAdd) {
+  //  explosions.add(explosion);
+  //}
 }
 void render() {
   background(0) ;
@@ -148,25 +148,27 @@ void render() {
   for (int i = 0; i < cities.length; i++) {
     cities[i].draw();
   }
-  for(Explosion explosion:explosions) {
-    explosion.draw();
-  }
-  //for (int i = 0; i < explosions.size(); i++) {
-  //  Explosion explosion = explosions.get(i);
-  //  if (!explosion.draw()) {
-  //    explosions.remove(explosion);
-  //  } else {
-  //    ArrayList<Meteor> meteors = wave.getMeteors();
-  //    for (int j = 0; j < meteors.size(); j++) {
-  //      Meteor meteor = meteors.get(i);
-  //      PVector meteorPosition = meteor.getPosition().copy();
-  //      if (explosion.isMeteorInRadius(meteor)) {
-  //        wave.removeMeteor(meteor);
-  //        explosions.add(new Explosion((int)meteorPosition.x, (int)meteorPosition.y));
-  //      }
-  //    }
-  //  }
+  //for(Explosion explosion:explosions) {
+  //  explosion.draw();
   //}
+  for (int i = 0; i < explosions.size(); i++) {
+    Explosion explosion = explosions.get(i);
+    explosion.draw();
+    if (!explosion.update()) {
+      explosions.remove(explosion);
+    } else {
+      ArrayList<Meteor> meteors = wave.getMeteors();
+      for (int j = 0; j < meteors.size(); j++) {
+        Meteor meteor = meteors.get(j);
+        PVector meteorPosition = meteor.getPosition().copy();
+        if (explosion.isMeteorInRadius(meteor)) {
+          wave.removeMeteor(meteor);
+          j--;
+          explosions.add(new Explosion((int)meteorPosition.x, (int)meteorPosition.y));
+        }
+      }
+    }
+  }
   
   if (!wave.spawnerTrigger() & !wave.draw(AIR_DENSITY)) {
     startNewWave();
@@ -190,11 +192,8 @@ void draw() {
   double current = millis();
   double elapsed = current - previousMillis;
   previousMillis = current;
-  //processInput(); from slides
-  if (elapsed >= MS_PER_UPDATE) {
-    update();
-    render();
-  }
+  update();
+  render();
  }
  void detectMeteorsInExplosionRadius() {
  }

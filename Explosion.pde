@@ -4,7 +4,7 @@ final class Explosion {
   final int EXPLOSION_RADIUS = displayHeight/20;
   final color COLOUR = #FAFF00;
   final int EXPLOSION_TICKS = 100;
-  int currentRadius = EXPLOSION_TICKS/10;
+  int currentRadius;
   PVector position;
   int currentTicks = 1;
   
