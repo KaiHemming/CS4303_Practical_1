@@ -5,7 +5,8 @@ final class Ballista {
   final color TRAJECTORY_COLOUR = #272525;
   final int TRAJECTORY_LINE_WEIGHT = 2;
   final int TRAJECTORY_DISPLAY_HEIGHT = displayHeight/2;
-  final int PROJECTILE_MASS = 10;
+  final int PROJECTILE_MASS = 20;
+  final int REMAINING_AMMO_SCORE = 5;
   int numProjectiles = 10;
   PVector drawPosition;
   PVector launchPosition;
@@ -27,7 +28,7 @@ final class Ballista {
     float opposite = abs(constrain(crossHairPos.y, displayHeight - TRAJECTORY_DISPLAY_HEIGHT, displayHeight - height) - launchPosition.y);
     //int angle = Math.round(atan(opposite/adjacent) * 180/PI);
     //println(angle);
-    PVector velocity = new PVector(adjacent/10, opposite*-1/10);
+    PVector velocity = new PVector(adjacent/20, opposite*-1/20);
     PlayerMissile missile = new PlayerMissile((int)launchPosition.x, (int)launchPosition.y, projectileRadius, (int)velocity.x, (int)velocity.y, PROJECTILE_MASS);
     numProjectiles--;
     return missile;

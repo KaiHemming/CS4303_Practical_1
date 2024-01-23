@@ -2,6 +2,7 @@ class Projectile {
   final int TRAIL_STROKE_MULTIPLIER = 1; //Multiplies based on missileRadius
   final float DRAG_COEFFICIENT = 0.05;
   final int TRAJECTORY_UPDATE_FREQ = 5;
+  float gravitationalForce = 0.1;
   color trajectoryColour = #FFFFFF;
   //color projectileColour =  TODO
   int trajectoryUpdateCount = 0;
@@ -13,7 +14,6 @@ class Projectile {
   int mass;
   float area;
   
-  
   Projectile(int x, int y, int missileRadius, int xVelocity, int yVelocity, int mass) {
     position = new PVector(x, y);
     trajectory.add(position.copy());
@@ -24,8 +24,15 @@ class Projectile {
     this.area = 3 * missileRadius * missileRadius; //Aproximately
   }
   
+  PVector getPosition() {
+    return position;
+  }
+  
   void setTrajectoryColour(color colour) {
     this.trajectoryColour = colour;
+  }
+  void setGravitationalForce(float gravitationalForce) {
+    this.gravitationalForce = gravitationalForce;
   }
   
   void draw() {
@@ -77,7 +84,7 @@ class Projectile {
   boolean move(float AIR_DENSITY) {
     
     applyForce(calculateDrag(AIR_DENSITY));
-    PVector gravity = new PVector(0, 0.1*mass);
+    PVector gravity = new PVector(0, gravitationalForce*mass);
     applyForce(gravity);
     //println("a:",acceleration);
     //println("v:",velocity);
@@ -86,6 +93,9 @@ class Projectile {
     position.add(velocity);
     
     acceleration.mult(0);
-    return position.y <= displayHeight;
+    
+    boolean isAboveGround = position.y <= displayHeight; // false if on ground
+    boolean isWithinWidth = position.x >= 0 & position.x <= displayWidth; //false if out of area
+    return !(!isAboveGround || !isWithinWidth);
   }  
 }
