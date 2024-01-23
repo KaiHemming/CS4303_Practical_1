@@ -9,13 +9,10 @@ int projectileRadius;
 
 // Stage Physics 
 final float AIR_DENSITY = 1.22; 
-final double MS_PER_UPDATE = 30;
-double previousMillis;
-double lag;
 
 // Game Elements
 Wave wave;
-Ballista[] ballistas = new Ballista[3];
+Ballista[] ballistae = new Ballista[3];
 City[] cities = new City[6];
 ArrayList<PlayerMissile> playerMissiles = new ArrayList<PlayerMissile>();
 ArrayList<Explosion> explosions = new ArrayList<Explosion>();
@@ -44,16 +41,17 @@ void setup() {
   // Spawn ballistas
   int ballistaWidth = displayWidth/BALLISTA_WIDTH_PROPORTION;
   int ballistaHeight = displayHeight/BALLISTA_HEIGHT_PROPORTION;
-  int firstBallistaXCoord = displayWidth/2 - ballistaWidth/2;
+  int secondBallistaXCoord = displayWidth/2 - ballistaWidth/2;
+  int thirdBallistaXCoord = displayWidth - ballistaWidth;
   int y = displayHeight - ballistaHeight;
-  ballistas[0] = new Ballista(0, y, ballistaWidth, ballistaHeight);
-  ballistas[1] = new Ballista(firstBallistaXCoord, y, ballistaWidth, ballistaHeight);
-  ballistas[2] = new Ballista(displayWidth - ballistaWidth, y, ballistaWidth, ballistaHeight);
+  ballistae[0] = new Ballista(0, y, ballistaWidth, ballistaHeight);
+  ballistae[1] = new Ballista(secondBallistaXCoord, y, ballistaWidth, ballistaHeight);
+  ballistae[2] = new Ballista(thirdBallistaXCoord, y, ballistaWidth, ballistaHeight);
   
   // Spawn cities
-  int cityWidth = ballistaWidth/2;
+  int cityWidth = ballistaWidth;
   int cityHeight = displayHeight/CITY_HEIGHT_PROPORTION;
-  int spacing = (firstBallistaXCoord - ballistaWidth - 3*cityWidth)/4;
+  int spacing = (secondBallistaXCoord - ballistaWidth - 3*cityWidth)/4;
   int x = ballistaWidth + spacing;
   y = displayHeight - cityHeight;
   for (int i = 0; i < cities.length; i++) {
@@ -71,7 +69,7 @@ void setup() {
 }
 void startNewWave() {
   // Start Wave
-  wave = new Wave(numMeteors, spawnerTicks, maxSpawnsPerTick, yVelocityVariance);
+  wave = new Wave(numMeteors, spawnerTicks, maxSpawnsPerTick, yVelocityVariance, cities, ballistae);
   printWaveData();
   
   // Change values for next wave
@@ -95,62 +93,19 @@ void printWaveData() {
   println("maxSpawnsPerTick: ", maxSpawnsPerTick);
   println("yVelocityVariance: ", yVelocityVariance);
 }
-
-void update() {
-  //ArrayList<Meteor> meteorsToRemove = new ArrayList<Meteor>();
-  //ArrayList<Explosion> explosionsToAdd = new ArrayList<Explosion>();
-  
-  //for (Explosion explosion:explosions) {
-  //  if (!explosion.update()) {
-  //    explosions.remove(explosion);
-  //  } else {
-  //    ArrayList<Meteor> meteors = wave.getMeteors();
-  //    for (Meteor meteor:meteors) {
-  //      PVector meteorPosition = meteor.getPosition().copy();
-  //      if (explosion.isMeteorInRadius(meteor)) {
-  //        meteorsToRemove.add(meteor);
-  //        explosionsToAdd.add(new Explosion((int)meteorPosition.x, (int)meteorPosition.y));
-  //      }
-  //    }
-  //  }
-  //}
-  
-  //for(Meteor meteor: meteorsToRemove) {
-  //  wave.removeMeteor(meteor);
-  //}
-  //for(Explosion explosion: explosionsToAdd) {
-  //  explosions.add(explosion);
-  //}
-}
 void render() {
   background(0) ;
-  //// Crosshair Movement
-  //if (movingUp) {
-  //  crossHair.moveUp();
-  //}
-  //if (movingDown) {
-  //  crossHair.moveDown();
-  //}
-  //if (movingLeft) {
-  //  crossHair.moveLeft() ;
-  //}
-  //if (movingRight) {
-  //  crossHair.moveRight() ; 
-  //}
   
-  for (int i = 0; i < ballistas.length; i++) {
+  for (int i = 0; i < ballistae.length; i++) {
     if (i == selectedBallista) {
-      ballistas[i].draw(crossHair.getPosition());
+      ballistae[i].draw(crossHair.getPosition());
     } else {
-      ballistas[i].draw();
+      ballistae[i].draw();
     }
   }
   for (int i = 0; i < cities.length; i++) {
     cities[i].draw();
   }
-  //for(Explosion explosion:explosions) {
-  //  explosion.draw();
-  //}
   for (int i = 0; i < explosions.size(); i++) {
     Explosion explosion = explosions.get(i);
     explosion.draw();
@@ -189,10 +144,6 @@ void render() {
 
 // Render graphics
 void draw() {
-  double current = millis();
-  double elapsed = current - previousMillis;
-  previousMillis = current;
-  update();
   render();
  }
  void detectMeteorsInExplosionRadius() {
@@ -207,7 +158,7 @@ void draw() {
  }
  void mousePressed() {
    if (mouseButton == LEFT) {
-     PlayerMissile playerMissile = ballistas[selectedBallista].fire(crossHair.getPosition());
+     PlayerMissile playerMissile = ballistae[selectedBallista].fire(crossHair.getPosition());
      if (playerMissile != null) {
        playerMissiles.add(playerMissile);
      }
@@ -216,28 +167,17 @@ void draw() {
    }
  }
  void keyPressed() {
-  //if (key == CODED) {
-  //   switch (keyCode) {
-  //     case UP:
-  //       movingUp = true;
-  //       break;
-  //     case DOWN:
-  //       movingDown = true;
-  //       break;
-  //     case LEFT:
-  //       movingLeft = true;
-  //       break;
-  //     case RIGHT:
-  //       movingRight = true;
-  //       break;
   switch (key) {
     case '1':
+      if (ballistae[0].isDisabled()) break;
       selectedBallista = 0;
       break;
     case '2':
+      if (ballistae[1].isDisabled()) break;
       selectedBallista = 1;
       break;
     case '3':
+      if (ballistae[2].isDisabled()) break;
       selectedBallista = 2;
       break;
     case ' ':

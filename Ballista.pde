@@ -7,20 +7,41 @@ final class Ballista {
   final int TRAJECTORY_DISPLAY_HEIGHT = displayHeight/2;
   final int PROJECTILE_MASS = 20;
   final int REMAINING_AMMO_SCORE = 5;
+  final int NUM_PROJECTILES = 10;
+  boolean isDisabled = false;
   int numProjectiles = 10;
-  PVector drawPosition;
+  PVector position;
   PVector launchPosition;
   int width, height;
   
   Ballista(int x, int y, int width, int height) {
-    drawPosition = new PVector(x, y);
-    launchPosition = drawPosition.copy();
+    position = new PVector(x, y);
+    launchPosition = position.copy();
     launchPosition.x += width/2;
     this.width = width;
     this.height = height;
   }
+  PVector getPosition() {
+    return position;
+  }
+  int getWidth() {
+    return width;
+  }
+  boolean isDisabled() {
+    return isDisabled;
+  }
+  void setDisabled(boolean isDisabled) {
+    this.isDisabled = isDisabled;
+  }
+  void reset() {
+    isDisabled = false;
+    numProjectiles = NUM_PROJECTILES;
+  }
   // Returns null if there are no more projectiles
   PlayerMissile fire(PVector crossHairPos) {
+    if (isDisabled) {
+      return null;
+    }
     if (numProjectiles <= 0) {
       return null;
     }
@@ -34,6 +55,9 @@ final class Ballista {
     return missile;
   }
   void draw(PVector crossHairPos) {
+    if (isDisabled) {
+      return;
+    }
     strokeWeight(TRAJECTORY_LINE_WEIGHT);
     stroke(TRAJECTORY_COLOUR);
     line(launchPosition.x, launchPosition.y, crossHairPos.x, constrain(crossHairPos.y, displayHeight - TRAJECTORY_DISPLAY_HEIGHT, displayHeight - height));
@@ -44,13 +68,16 @@ final class Ballista {
     ellipse(launchPosition.x, launchPosition.y, height/4, height/4);
     
     fill(SELECTED_BALLISTA_COLOUR);
-    rect(drawPosition.x, drawPosition.y, width, height);
+    rect(position.x, position.y, width, height);
   }
   
   void draw() {
+    if (isDisabled) {
+      return;
+    }
     ellipseMode(RADIUS);
     fill(BALLISTA_COLOUR);
     ellipse(launchPosition.x, launchPosition.y, height/4, height/4);
-    rect(drawPosition.x, drawPosition.y, width, height);
+    rect(position.x, position.y, width, height);
   }
 }

@@ -3,19 +3,31 @@ final class City {
   final color CITY_COLOUR = #E0B33F;
   boolean isSurviving = true;
   int width, height;
-  PVector drawPosition;
+  PVector position;
   
   City(int x, int y, int width, int height) {
-    drawPosition = new PVector(x, y);
+    position = new PVector(x, y);
     this.width = width;
     this.height = height;
+  }
+  
+  PVector getPosition() {
+    return position;
+  }
+  
+  int getWidth() { 
+    return width;
+  }
+  
+  void setSurviving(boolean isSurviving) {
+    this.isSurviving = isSurviving;
   }
   
   void draw() {
     if (isSurviving) {
       stroke(#FFFFFF);
       fill(CITY_COLOUR);
-      rect(drawPosition.x, drawPosition.y, width, height);
+      rect(position.x, position.y, width, height);
       noStroke();
     }
   }
