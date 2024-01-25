@@ -1,8 +1,7 @@
 final class Wave {
   // Chances are 1 in ___
-  final int SPLIT_CHANCE = 100;
-  final int BOMBER_SPAWN_CHANCE = 1000;
-  final int SATELLITE_SPAWN_CHANCE = 1000;
+  final int ENEMY_SPAWN_CHANCE = 2000;
+  final int SPLIT_CHANCE = 1000;
   
   final float WAVE_GRAVITY = 0.01;
   final int XVELOCITY_VARIANCE = 5;
@@ -11,6 +10,7 @@ final class Wave {
   final int WIDTH_PADDING = displayWidth/10;
   final int CITY_SCORE_VALUE = 100;
   final int UNUSED_BOMB_SCORE_VALUE = 5;
+  final int ENEMY_SPAWN_HEIGHT = (int)(displayHeight/2.5);
   
   City[] cities;
   Ballista[] ballistae;
@@ -19,6 +19,7 @@ final class Wave {
   int numSpawned;
   ArrayList<Meteor> meteors = new ArrayList<Meteor>();
   ArrayList<Explosion> explosions = new ArrayList<Explosion>();
+  ArrayList<Enemy> enemies = new ArrayList<Enemy>();
   int spawnerTicks;
   int currentSpawnerTicks;
   int maxSpawnsPerTick;
@@ -37,8 +38,16 @@ final class Wave {
     return meteors;
   }
   
+  ArrayList<Enemy> getEnemies() {
+    return enemies;
+  }
+  
   void removeMeteor(Meteor meteor) {
     meteors.remove(meteor);
+  }
+  
+  void removeEnemy(Enemy enemy) {
+    enemies.remove(enemy);
   }
   
   // Returns false if there are no more meteors to spawn.
@@ -72,7 +81,7 @@ final class Wave {
   }
   // true if things to draw
   boolean draw(float AIR_DENSITY) {
-    if (waveNumber >= 1 & meteors.size() > 0) {
+    if (waveNumber > 2 & meteors.size() > 0) {
       int chance = (int)random(1,SPLIT_CHANCE + 1);
       if (chance == 1) { 
         Meteor meteor = meteors.get((int)random(0, meteors.size()-1));
@@ -88,7 +97,25 @@ final class Wave {
       }
       explosion.draw();
     }
-    if (meteors.size() <= 0) {
+    if (waveNumber > 2 & (numMeteors-numSpawned) > 1) {
+      if ((int)random(1, ENEMY_SPAWN_CHANCE + 1) == 1) {
+        spawnEnemy();
+      }  
+    }
+    for (int i = 0; i < enemies.size(); i++) {
+      Enemy enemy = enemies.get(i);
+      if (enemy.hasFinished()) {
+        removeEnemy(enemy);
+        i--;
+        continue;
+      }
+      Meteor meteor = enemy.move(WAVE_GRAVITY);
+      enemy.draw();
+      if (meteor != null) {
+        meteors.add(meteor);
+      }
+    }
+    if (meteors.size() <= 0 & enemies.size() <= 0) {
       return false;
     }
     for (int i = 0; i < meteors.size(); i++) {
@@ -153,5 +180,24 @@ final class Wave {
       ballista.reset();
     }
     return calculateScore();
+  }
+  
+  void spawnEnemy() {
+    boolean isMovingLeft;
+    int x;
+    if ((int)random(1,3) == 1) {
+      isMovingLeft = true;
+      x = displayWidth;
+    } else {
+      isMovingLeft = false;
+      x = 0;
+    }
+    if ((int)random(1,3) == 1) {
+      Satellite satellite = new Satellite(x, ENEMY_SPAWN_HEIGHT, isMovingLeft);
+      enemies.add(satellite);
+    } else {
+      Bomber bomber = new Bomber(x, displayHeight/3, isMovingLeft);
+      enemies.add(bomber);
+    }
   }
 }

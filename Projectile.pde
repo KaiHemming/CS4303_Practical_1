@@ -2,7 +2,7 @@ class Projectile {
   final int TRAIL_STROKE_MULTIPLIER = 1; //Multiplies based on missileRadius
   final float DRAG_COEFFICIENT = 0.05;
   final int TRAJECTORY_UPDATE_FREQ = 5;
-  float gravitationalForce = 0.1;
+  float gravitationalForce = 0.05;
   color trajectoryColour = #FFFFFF;
   //color projectileColour =  TODO
   int trajectoryUpdateCount = 0;

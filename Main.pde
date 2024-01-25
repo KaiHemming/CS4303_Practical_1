@@ -6,6 +6,8 @@ final int BALLISTA_WIDTH_PROPORTION = 10;
 final int BALLISTA_HEIGHT_PROPORTION = 20;
 final int CITY_HEIGHT_PROPORTION = 30;
 final int METEOR_SCORE_VALUE = 25;
+final int ENEMY_SCORE_VALUE = 100;
+final int CITY_RESTORATION_COST = 10000;
 int projectileRadius;
 
 // Stage Physics 
@@ -17,12 +19,15 @@ Ballista[] ballistae = new Ballista[3];
 City[] cities = new City[6];
 ArrayList<PlayerMissile> playerMissiles = new ArrayList<PlayerMissile>();
 ArrayList<Explosion> explosions = new ArrayList<Explosion>();
-CrossHair crossHair;
+CrossHair crossHair = new CrossHair();
 int score = 0;
 int scoreMultiplier = 1;
 HUD hud = new HUD();
 boolean hasLost;
+boolean hasStarted = false;
 LoseScreen loseScreen = new LoseScreen();
+TitleScreen titleScreen = new TitleScreen();
+int spentScore;
 
 // Wave values
 int waveNumber = 1;
@@ -42,14 +47,10 @@ void reset() {
   yVelocityVariance = 0;
   score = 0;
   scoreMultiplier = 1;
-  setup();
+  spentScore = 0;
   hasLost = false;
-}
-
-void setup() {
-  fullScreen();
-  noCursor();
-  crossHair = new CrossHair();
+  hasStarted = true;
+  
   projectileRadius = displayHeight/PROJECTILE_HEIGHT_PROPORTION;
   
   // Spawn ballistas
@@ -81,9 +82,21 @@ void setup() {
   // Start first wave
   startNewWave();
 }
+
+void setup() {
+  fullScreen();
+  noCursor();
+  titleScreen.draw();
+}
 void startNewWave() {
-  println("score:", score);
-  println("scoreMultiplier:", scoreMultiplier);
+  boolean checkLost = true;
+    for (City city:cities) {
+      if (city.isSurviving()) {
+        checkLost = false;
+        break;
+      }
+    }
+  hasLost = checkLost;
   if (wave != null) {
     score += wave.endWave() * scoreMultiplier;
   }
@@ -109,14 +122,20 @@ void startNewWave() {
     numMeteors+=3;
   }
   waveNumber++;
-  boolean checkLost = true;
-    for (City city:cities) {
-      if (city.isSurviving()) {
-        checkLost = false;
-        break;
+  int numToRestore = constrain((int)(score - spentScore)/CITY_RESTORATION_COST, 0, 6);
+  if (numToRestore > 0) {
+    println("Restoring " + numToRestore + " cities");
+    for (int i = 0; i < cities.length; i++) {
+      if (!cities[i].isSurviving) {
+        cities[i].setSurviving(true);
+        spentScore += CITY_RESTORATION_COST;
+        numToRestore--;
+        if (numToRestore < 1) {
+          break;
+        }
       }
     }
-  hasLost = checkLost;
+  }
 }
 
 void addScore(int addition) {
@@ -172,6 +191,15 @@ void render() {
           explosions.add(new Explosion((int)meteorPosition.x, (int)meteorPosition.y));
         }
       }
+      ArrayList<Enemy> enemies = wave.getEnemies();
+      for (int j = 0; j < enemies.size(); j++) {
+        Enemy enemy = enemies.get(j);
+        if (explosion.isEnemyInRadius(enemy)) {
+          wave.removeEnemy(enemy);
+          addScore(ENEMY_SCORE_VALUE);
+          j--;
+        }
+      }
     }
   }
   
@@ -198,6 +226,8 @@ void draw() {
   if (hasLost) {
     loseScreen.draw();
     hud.draw(score, waveNumber, ballistae);
+  } else if (!hasStarted) {
+    titleScreen.draw();
   }
   else {
     render();
@@ -214,6 +244,9 @@ void draw() {
    }
  }
  void mousePressed() {
+   if (hasLost | !hasStarted) {
+     return;
+   }
    if (mouseButton == LEFT) {
      PlayerMissile playerMissile = ballistae[selectedBallista].fire(crossHair.getPosition());
      if (playerMissile != null) {
@@ -241,6 +274,11 @@ void draw() {
       explodePlayerMissile();
       if (hasLost) {
         reset();
+      }
+      else if (!hasStarted) {
+        reset();
+      } else {
+        explodePlayerMissile();
       }
       break;
  }

@@ -2,7 +2,6 @@ final class Meteor extends Projectile {
   final int SPLIT_Y_VELOCITY = -1;
   final int SPLIT_X_VELOCITY_VARIANCE = 5;
   final int MAX_SPLITS = 4;
-  final int SCORE = 25;
   color trajectoryColour = #810000;
   
   Meteor(int x, int y, int radius, int xVelocity, int yVelocity, int mass) {
