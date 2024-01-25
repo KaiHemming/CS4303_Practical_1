@@ -34,6 +34,18 @@ int yVelocityVariance = 0;
 // Inputs
 int selectedBallista = 1;
 
+void reset() {
+  waveNumber = 1;
+  numMeteors = 5;
+  spawnerTicks = 400;
+  maxSpawnsPerTick = 2;
+  yVelocityVariance = 0;
+  score = 0;
+  scoreMultiplier = 1;
+  setup();
+  hasLost = false;
+}
+
 void setup() {
   fullScreen();
   noCursor();
@@ -227,6 +239,9 @@ void draw() {
       break;
     case ' ':
       explodePlayerMissile();
+      if (hasLost) {
+        reset();
+      }
       break;
  }
 }

@@ -1,5 +1,5 @@
 final class Wave {
-  final int SPLIT_CHANCE = 1000; //Chance of getting one with this as max
+  final int SPLIT_CHANCE = 10; //Chance of getting one with this as max
   final float WAVE_GRAVITY = 0.01;
   final int XVELOCITY_VARIANCE = 5;
   final int PROJECTILE_MASS = 20;
