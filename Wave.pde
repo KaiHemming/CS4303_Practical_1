@@ -4,6 +4,8 @@ final class Wave {
   final int PROJECTILE_MASS = 20;
   final int SPAWN_DELAY = 100;
   final int WIDTH_PADDING = displayWidth/10;
+  final int CITY_SCORE_VALUE = 100;
+  final int UNUSED_BOMB_SCORE_VALUE = 5;
   City[] cities;
   Ballista[] ballistae;
   int yVelocityVariance;
@@ -112,16 +114,27 @@ final class Wave {
     }
   }
   
-  // TODO:
-  void calculateScore() {
+  int calculateScore() {
+    int score = 0;
+    for (City city:cities) {
+      if (city.isSurviving()) {
+        score += CITY_SCORE_VALUE;
+      }
+    }
+    for (Ballista ballista:ballistae) {
+      score += ballista.getNumProjectiles() * UNUSED_BOMB_SCORE_VALUE;
+    }
+    return score;
   }
   
-  void endWave() {
-    for (City city:cities) {
-      city.setSurviving(true);
-    }
+  int endWave() {
+    // Check if 10k points
+    //for (City city:cities) {
+    //  city.setSurviving(true);
+    //}
     for (Ballista ballista:ballistae) {
       ballista.reset();
     }
+    return calculateScore();
   }
 }

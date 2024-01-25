@@ -19,6 +19,10 @@ final class City {
     return width;
   }
   
+  boolean isSurviving() {
+    return isSurviving;
+  }
+  
   void setSurviving(boolean isSurviving) {
     this.isSurviving = isSurviving;
   }

@@ -5,6 +5,7 @@ final int PROJECTILE_HEIGHT_PROPORTION = 300;
 final int BALLISTA_WIDTH_PROPORTION = 10;
 final int BALLISTA_HEIGHT_PROPORTION = 20;
 final int CITY_HEIGHT_PROPORTION = 30;
+final int METEOR_SCORE_VALUE = 25;
 int projectileRadius;
 
 // Stage Physics 
@@ -17,6 +18,8 @@ City[] cities = new City[6];
 ArrayList<PlayerMissile> playerMissiles = new ArrayList<PlayerMissile>();
 ArrayList<Explosion> explosions = new ArrayList<Explosion>();
 CrossHair crossHair;
+int score = 0;
+int scoreMultiplier = 1;
 
 // Wave values
 int waveNumber = 1;
@@ -68,6 +71,10 @@ void setup() {
   startNewWave();
 }
 void startNewWave() {
+  if (wave != null) {
+    score += wave.endWave();
+    println(score);
+  }
   // Start Wave
   wave = new Wave(numMeteors, spawnerTicks, maxSpawnsPerTick, yVelocityVariance, cities, ballistae);
   printWaveData();
@@ -84,6 +91,10 @@ void startNewWave() {
     numMeteors+=3;
   }
   waveNumber++;
+}
+
+void addScore(int addition) {
+  score += addition * scoreMultiplier; 
 }
 
 void printWaveData() {
@@ -118,6 +129,7 @@ void render() {
         PVector meteorPosition = meteor.getPosition().copy();
         if (explosion.isMeteorInRadius(meteor)) {
           wave.removeMeteor(meteor);
+          addScore(METEOR_SCORE_VALUE);
           j--;
           explosions.add(new Explosion((int)meteorPosition.x, (int)meteorPosition.y));
         }

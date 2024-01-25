@@ -1,8 +1,6 @@
 final class CrossHair {
   PVector position;
   PVector size;
-  // Scales movement speed using height
-  final int MOVE_INCREMENT = displayHeight/100;
   final int CROSSHAIR_SIZE = 2;
   final int CROSSHAIR_SPACING = 15;
   color crossHairColour = #FFFFFF;
@@ -32,31 +30,5 @@ final class CrossHair {
   void setPos(int x, int y) {
     position.x = x;
     position.y = y;
-  }
-  
-  // Movement bounded by display limits.
-  void moveUp() {
-    position.y -= MOVE_INCREMENT;
-    if (position.y < 0) {
-      position.y = 0;
-    }
-  }
-  void moveDown() {
-    position.y += MOVE_INCREMENT;
-    if (position.y > displayHeight) {
-      position.y = displayHeight;
-    }
-  }
-  void moveLeft() {
-    position.x -= MOVE_INCREMENT;
-    if (position.x < 0) {
-      position.x = 0;
-    }
-  }
-  void moveRight() {
-    position.x += MOVE_INCREMENT;
-    if (position.x > displayWidth) {
-      position.x = displayWidth;
-    }
   }
 }

@@ -27,6 +27,9 @@ final class Ballista {
   int getWidth() {
     return width;
   }
+  int getNumProjectiles() {
+    return numProjectiles;
+  }
   boolean isDisabled() {
     return isDisabled;
   }
