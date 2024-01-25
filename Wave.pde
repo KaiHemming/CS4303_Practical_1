@@ -1,5 +1,9 @@
 final class Wave {
-  final int SPLIT_CHANCE = 10; //Chance of getting one with this as max
+  // Chances are 1 in ___
+  final int SPLIT_CHANCE = 100;
+  final int BOMBER_SPAWN_CHANCE = 1000;
+  final int SATELLITE_SPAWN_CHANCE = 1000;
+  
   final float WAVE_GRAVITY = 0.01;
   final int XVELOCITY_VARIANCE = 5;
   final int PROJECTILE_MASS = 20;
@@ -7,6 +11,7 @@ final class Wave {
   final int WIDTH_PADDING = displayWidth/10;
   final int CITY_SCORE_VALUE = 100;
   final int UNUSED_BOMB_SCORE_VALUE = 5;
+  
   City[] cities;
   Ballista[] ballistae;
   int yVelocityVariance;
