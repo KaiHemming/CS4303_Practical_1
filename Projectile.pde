@@ -4,7 +4,6 @@ class Projectile {
   final int TRAJECTORY_UPDATE_FREQ = 5;
   float gravitationalForce = 0.05;
   color trajectoryColour = #FFFFFF;
-  //color projectileColour =  TODO
   int trajectoryUpdateCount = 0;
   ArrayList<PVector> trajectory = new ArrayList<PVector>(); // For drawing trajectory line
   PVector position;
@@ -63,13 +62,11 @@ class Projectile {
   // https://processing.org/examples/forceswithvectors.html
   PVector calculateDrag(float AIR_DENSITY) {
     float speed = velocity.mag();
-    //println("s:", speed);
     float dragMagnitude = (DRAG_COEFFICIENT * speed * speed)/AIR_DENSITY;
     
     PVector drag = velocity.copy();
     drag.mult(-1);
     drag.setMag(dragMagnitude);
-    //println("d:",drag);
     return drag;
   }
   
@@ -83,12 +80,9 @@ class Projectile {
   
   // Returns true if not out of play area
   boolean move(float AIR_DENSITY) {
-    
     applyForce(calculateDrag(AIR_DENSITY));
     PVector gravity = new PVector(0, gravitationalForce*mass);
     applyForce(gravity);
-    //println("a:",acceleration);
-    //println("v:",velocity);
    
     velocity.add(acceleration);
     position.add(velocity);

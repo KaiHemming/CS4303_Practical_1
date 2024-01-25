@@ -45,7 +45,6 @@ void reset() {
   spawnerTicks = 400;
   maxSpawnsPerTick = 2;
   yVelocityVariance = 0;
-  score = 0;
   scoreMultiplier = 1;
   spentScore = 0;
   hasLost = false;
@@ -81,6 +80,7 @@ void reset() {
   
   // Start first wave
   startNewWave();
+  score = 0;
 }
 
 void setup() {
@@ -271,7 +271,6 @@ void draw() {
       selectedBallista = 2;
       break;
     case ' ':
-      explodePlayerMissile();
       if (hasLost) {
         reset();
       }

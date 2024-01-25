@@ -45,18 +45,6 @@ final class Explosion {
     if (dist(position.x, position.y, closestX, closestY) <= currentRadius) {
       return true;
     }
-    //if (dist(position.x, position.y, enemy.position.x, enemy.position.y) <= currentRadius) {
-    //  return true;
-    //}
-    //if (dist(position.x + enemy.width, position.y, enemy.position.x, enemy.position.y) <= currentRadius) {
-    //  return true;
-    //}
-    //if (dist(position.x, position.y + enemy.height, enemy.position.x, enemy.position.y) <= currentRadius) {
-    //  return true;
-    //}
-    //if (dist(position.x + enemy.width, position.y + enemy.height, enemy.position.x, enemy.position.y) <= currentRadius) {
-    //  return true;
-    //}
     return false;
   }
 }
