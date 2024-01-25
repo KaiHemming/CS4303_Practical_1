@@ -70,7 +70,7 @@ final class Wave {
     if (waveNumber >= 1 & meteors.size() > 0) {
       int chance = (int)random(1,SPLIT_CHANCE + 1);
       if (chance == 1) { 
-        Meteor meteor = meteors.get((int)random(0, meteors.size()));
+        Meteor meteor = meteors.get((int)random(0, meteors.size()-1));
         ArrayList<Meteor> splits = meteor.split(WAVE_GRAVITY);
         meteors.remove(meteor);
         meteors.addAll(splits);

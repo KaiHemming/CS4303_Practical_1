@@ -21,6 +21,8 @@ CrossHair crossHair;
 int score = 0;
 int scoreMultiplier = 1;
 HUD hud = new HUD();
+boolean hasLost;
+LoseScreen loseScreen = new LoseScreen();
 
 // Wave values
 int waveNumber = 1;
@@ -95,6 +97,14 @@ void startNewWave() {
     numMeteors+=3;
   }
   waveNumber++;
+  boolean checkLost = true;
+    for (City city:cities) {
+      if (city.isSurviving()) {
+        checkLost = false;
+        break;
+      }
+    }
+  hasLost = checkLost;
 }
 
 void addScore(int addition) {
@@ -110,16 +120,28 @@ void printWaveData() {
 }
 void render() {
   background(0);
-  
+  boolean remainingBallistae = false;
   for (int i = 0; i < ballistae.length; i++) {
     if (i == selectedBallista) {
       ballistae[i].draw(crossHair.getPosition());
     } else {
       ballistae[i].draw();
     }
+    if (!ballistae[i].isDisabled()) {
+      remainingBallistae = true;
+    }
   }
+  boolean remainingCities = false;
   for (int i = 0; i < cities.length; i++) {
     cities[i].draw();
+    if (!remainingBallistae) {
+      if (cities[i].isSurviving()) {
+        remainingCities = true;
+      }
+    }
+  }
+  if (!remainingCities & !remainingBallistae) {
+    hasLost = true;
   }
   for (int i = 0; i < explosions.size(); i++) {
     Explosion explosion = explosions.get(i);
@@ -161,7 +183,13 @@ void render() {
 
 // Render graphics
 void draw() {
-  render();
+  if (hasLost) {
+    loseScreen.draw();
+    hud.draw(score, waveNumber, ballistae);
+  }
+  else {
+    render();
+  }
  }
  void detectMeteorsInExplosionRadius() {
  }

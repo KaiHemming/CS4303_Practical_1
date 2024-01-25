@@ -12,8 +12,9 @@ final class Meteor extends Projectile {
     int numSplits = (int)random(2,MAX_SPLITS+1);
     ArrayList<Meteor> meteors = new ArrayList<Meteor>();
     for (int i = 0; i < numSplits; i++) {
-      int newXVelocity = (int)random(-10, 11);
-      Meteor meteor = new Meteor((int)position.x, (int)position.y, missileRadius, newXVelocity, -1, mass/numSplits);
+      int newXVelocity = (int)random(-5, 6);
+      // -1 yVelocity to make split meteors bounce
+      Meteor meteor = new Meteor((int)position.x, (int)position.y, missileRadius, newXVelocity, -1, mass/2);
       meteor.setGravitationalForce(waveGravity);
       meteors.add(meteor);
     }

@@ -1,5 +1,4 @@
 // Could take trajectory
-// Replace projectile with explosion on impact
 final class Explosion {
   final int EXPLOSION_RADIUS = displayHeight/20;
   color colour = #FAFF00;
