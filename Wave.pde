@@ -122,7 +122,9 @@ final class Wave {
       }
     }
     for (Ballista ballista:ballistae) {
-      score += ballista.getNumProjectiles() * UNUSED_BOMB_SCORE_VALUE;
+      if (!ballista.isDisabled()) {
+        score += ballista.getNumProjectiles() * UNUSED_BOMB_SCORE_VALUE;
+      }
     }
     return score;
   }

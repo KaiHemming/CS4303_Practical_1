@@ -20,6 +20,7 @@ ArrayList<Explosion> explosions = new ArrayList<Explosion>();
 CrossHair crossHair;
 int score = 0;
 int scoreMultiplier = 1;
+HUD hud = new HUD();
 
 // Wave values
 int waveNumber = 1;
@@ -29,10 +30,6 @@ int maxSpawnsPerTick = 2;
 int yVelocityVariance = 0;
 
 // Inputs
-boolean movingUp = false;
-boolean movingDown = false;
-boolean movingLeft = false;
-boolean movingRight = false;
 int selectedBallista = 1;
 
 void setup() {
@@ -71,9 +68,16 @@ void setup() {
   startNewWave();
 }
 void startNewWave() {
+  println("score:", score);
+  println("scoreMultiplier:", scoreMultiplier);
   if (wave != null) {
-    score += wave.endWave();
-    println(score);
+    score += wave.endWave() * scoreMultiplier;
+  }
+  if (waveNumber % 2 == 1
+      & waveNumber < 10 
+      & waveNumber > 1) {
+        
+    scoreMultiplier++;
   }
   // Start Wave
   wave = new Wave(numMeteors, spawnerTicks, maxSpawnsPerTick, yVelocityVariance, cities, ballistae);
@@ -105,7 +109,7 @@ void printWaveData() {
   println("yVelocityVariance: ", yVelocityVariance);
 }
 void render() {
-  background(0) ;
+  background(0);
   
   for (int i = 0; i < ballistae.length; i++) {
     if (i == selectedBallista) {
@@ -152,6 +156,7 @@ void render() {
       playerMissiles.remove(i);
     }
   }
+  hud.draw(score, waveNumber, ballistae);
 }
 
 // Render graphics

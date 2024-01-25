@@ -6,4 +6,7 @@ final class Meteor extends Projectile {
     super(x, y, radius, xVelocity, yVelocity, mass);
     this.setTrajectoryColour(trajectoryColour);
   }
+  // TODO:
+  void split() {
+  }
 }
