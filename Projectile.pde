@@ -75,7 +75,7 @@ class Projectile {
   
   // applyForce() code from
   // https://processing.org/examples/forceswithvectors.html
-  // A = F/M
+  // F = MA
   void applyForce(PVector force) {
     PVector a = PVector.div(force, mass);
     acceleration.add(a);

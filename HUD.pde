@@ -17,6 +17,14 @@ final class HUD {
     fill(SECONDARY_COLOUR);
     textSize(FONT_SIZE/2);
     textAlign(CENTER, BOTTOM);
-    text(ballistae[0].getNumProjectiles(), ballistae[0].getWidth()/2, displayHeight - Y_PADDING);
+    if (!ballistae[0].isDisabled()) {
+      text(ballistae[0].getNumProjectiles(), ballistae[0].getWidth()/2, displayHeight - Y_PADDING);
+    }
+    if (!ballistae[1].isDisabled()) {
+      text(ballistae[1].getNumProjectiles(), displayWidth/2, displayHeight - Y_PADDING);
+    }
+    if (!ballistae[2].isDisabled()) {
+      text(ballistae[2].getNumProjectiles(), displayWidth - ballistae[2].getWidth()/2, displayHeight - Y_PADDING);
+    }
   }
 }

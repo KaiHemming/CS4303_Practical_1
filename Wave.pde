@@ -1,4 +1,5 @@
 final class Wave {
+  final int SPLIT_CHANCE = 1000; //Chance of getting one with this as max
   final float WAVE_GRAVITY = 0.01;
   final int XVELOCITY_VARIANCE = 5;
   final int PROJECTILE_MASS = 20;
@@ -66,6 +67,15 @@ final class Wave {
   }
   // true if things to draw
   boolean draw(float AIR_DENSITY) {
+    if (waveNumber >= 1 & meteors.size() > 0) {
+      int chance = (int)random(1,SPLIT_CHANCE + 1);
+      if (chance == 1) { 
+        Meteor meteor = meteors.get((int)random(0, meteors.size()));
+        ArrayList<Meteor> splits = meteor.split(WAVE_GRAVITY);
+        meteors.remove(meteor);
+        meteors.addAll(splits);
+      }
+    }
     for (int i = 0; i < explosions.size(); i++) {
       Explosion explosion = explosions.get(i);
       if (!explosion.update()) {
