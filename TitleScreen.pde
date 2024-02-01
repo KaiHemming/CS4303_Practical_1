@@ -5,6 +5,11 @@ final class TitleScreen {
   final int Y_PADDING = 5;
   final String welcomeMessage = "Ballista Command!";
   final String instruction = "Press spacebar to play";
+  
+  boolean isMouseDisabled() {
+    return false;
+  }
+  
   void draw() {
     background(BACKGROUND_COLOUR);
     fill(TEXT_COLOUR);

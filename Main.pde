@@ -19,7 +19,7 @@ Ballista[] ballistae = new Ballista[3];
 City[] cities = new City[6];
 ArrayList<PlayerMissile> playerMissiles = new ArrayList<PlayerMissile>();
 ArrayList<Explosion> explosions = new ArrayList<Explosion>();
-CrossHair crossHair = new CrossHair();
+CrossHair crossHair;
 int score = 0;
 int scoreMultiplier = 1;
 HUD hud = new HUD();
@@ -28,6 +28,7 @@ boolean hasStarted = false;
 LoseScreen loseScreen = new LoseScreen();
 TitleScreen titleScreen = new TitleScreen();
 int spentScore;
+boolean mouseDisabled = false;
 
 // Wave values
 int waveNumber = 1;
@@ -45,6 +46,7 @@ void reset() {
   spawnerTicks = 400;
   maxSpawnsPerTick = 2;
   yVelocityVariance = 0;
+  score = 0;
   scoreMultiplier = 1;
   spentScore = 0;
   hasLost = false;
@@ -80,11 +82,11 @@ void reset() {
   
   // Start first wave
   startNewWave();
-  score = 0;
 }
 
 void setup() {
   fullScreen();
+  crossHair = new CrossHair();
   noCursor();
   titleScreen.draw();
 }
@@ -207,7 +209,9 @@ void render() {
     startNewWave();
   }
   
-  crossHair.setPos(mouseX, mouseY);
+  if (!mouseDisabled) {
+    crossHair.setPos(mouseX, mouseY);
+  }
   crossHair.draw() ;
   
   for (int i = 0; i < playerMissiles.size(); i++) {
@@ -256,6 +260,24 @@ void draw() {
      explodePlayerMissile();
    }
  }
+ void mouseWheel(MouseEvent e) {
+   if (e.getCount() > 0) {
+     if (selectedBallista >= 2) {
+       selectedBallista = 0;
+     } else {
+       selectedBallista++;
+     }
+   } else if (e.getCount() < 0) {
+     if (selectedBallista <= 0) {
+       selectedBallista = 2;
+     } else {
+       selectedBallista--;
+     }
+   }
+ }
+ void mouseMoved() {
+   mouseDisabled = false;
+ }
  void keyPressed() {
   switch (key) {
     case '1':
@@ -271,6 +293,7 @@ void draw() {
       selectedBallista = 2;
       break;
     case ' ':
+      explodePlayerMissile();
       if (hasLost) {
         reset();
       }

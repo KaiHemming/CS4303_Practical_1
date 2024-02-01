@@ -78,6 +78,7 @@ final class Ballista {
     if (isDisabled) {
       return;
     }
+    noStroke();
     ellipseMode(RADIUS);
     fill(BALLISTA_COLOUR);
     ellipse(launchPosition.x, launchPosition.y, height/4, height/4);

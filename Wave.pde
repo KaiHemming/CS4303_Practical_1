@@ -172,6 +172,10 @@ final class Wave {
   }
   
   int endWave() {
+    // Check if 10k points
+    //for (City city:cities) {
+    //  city.setSurviving(true);
+    //}
     for (Ballista ballista:ballistae) {
       ballista.reset();
     }
