@@ -1,6 +1,6 @@
 final class Wave {
   // Chances are 1 in ___
-  final int ENEMY_SPAWN_CHANCE = 2000;
+  final int ENEMY_SPAWN_CHANCE = 100; // TODO: Set to 2000
   final int SPLIT_CHANCE = 1000;
   
   final float WAVE_GRAVITY = 0.01;
@@ -20,6 +20,7 @@ final class Wave {
   ArrayList<Meteor> meteors = new ArrayList<Meteor>();
   ArrayList<Explosion> explosions = new ArrayList<Explosion>();
   ArrayList<Enemy> enemies = new ArrayList<Enemy>();
+  ArrayList<SmartBomb> smartBombs = new ArrayList<SmartBomb>();
   int spawnerTicks;
   int currentSpawnerTicks;
   int maxSpawnsPerTick;
@@ -97,10 +98,10 @@ final class Wave {
       }
       explosion.draw();
     }
-    if (waveNumber > 2 & (numMeteors-numSpawned) > 1) {
-      if ((int)random(1, ENEMY_SPAWN_CHANCE + 1) == 1) {
-        spawnEnemy();
-      }  
+    if (waveNumber > 0 & (numMeteors-numSpawned) > 1) { //TODO: waveNumber > 2
+       if ((int)random(1, ENEMY_SPAWN_CHANCE + 1) == 1) {
+         spawnEnemy();
+       }
     }
     for (int i = 0; i < enemies.size(); i++) {
       Enemy enemy = enemies.get(i);
@@ -128,6 +129,18 @@ final class Wave {
         }
       } else {
         meteor.draw();
+      }
+    }
+    for (int i = 0; i < smartBombs.size(); i++) {
+      SmartBomb bomb = smartBombs.get(i);
+      if (!bomb.move(AIR_DENSITY)) {
+        PVector bombPosition = bomb.getPosition();
+        smartBombs.remove(bomb);
+        if (bombPosition.y >= displayHeight - displayWidth/20) {
+          checkCollision((int)bombPosition.x);
+        }
+      } else {
+        bomb.draw();
       }
     }
     return true;
@@ -192,12 +205,27 @@ final class Wave {
       isMovingLeft = false;
       x = 0;
     }
-    if ((int)random(1,3) == 1) {
-      Satellite satellite = new Satellite(x, ENEMY_SPAWN_HEIGHT, isMovingLeft);
-      enemies.add(satellite);
-    } else {
-      Bomber bomber = new Bomber(x, displayHeight/3, isMovingLeft);
-      enemies.add(bomber);
+    int r = (int)random(1,4);
+    switch (r) {
+      case 1:
+        Satellite satellite = new Satellite(x, ENEMY_SPAWN_HEIGHT, isMovingLeft);
+        enemies.add(satellite);
+        break;
+      case 2:
+        Bomber bomber = new Bomber(x, displayHeight/3, isMovingLeft);
+        enemies.add(bomber);
+        break;
+      case 3:
+        x = (int)random(WIDTH_PADDING, displayWidth-WIDTH_PADDING);
+        int xVelocity = 0;
+        if (x > WIDTH_PADDING*2 & x < displayWidth-WIDTH_PADDING*2) {
+          xVelocity = (int)random(XVELOCITY_VARIANCE*-1, XVELOCITY_VARIANCE);
+        }
+        int yVelocity = (int)random(0, yVelocityVariance);
+
+        SmartBomb bomb = new SmartBomb(x, -10, projectileRadius, xVelocity, yVelocity, PROJECTILE_MASS);
+        bomb.setGravitationalForce(WAVE_GRAVITY);
+        smartBombs.add(bomb);
     }
   }
 }
