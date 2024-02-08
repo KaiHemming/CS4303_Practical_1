@@ -1,5 +1,4 @@
 final class City {
-  final int SURVIVING_SCORE = 100;
   final color CITY_COLOUR = #E0B33F;
   boolean isSurviving = true;
   int width, height;
@@ -32,12 +31,5 @@ final class City {
       fill(CITY_COLOUR);
       rect(position.x, position.y, width, height);
     }
-  }
-  
-  int getSurvivingScore() {
-    if (isSurviving) {
-      return SURVIVING_SCORE;
-    }
-    return 0;
   }
 }

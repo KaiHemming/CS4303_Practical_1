@@ -103,8 +103,9 @@ final class Wave {
       Explosion explosion = explosions.get(i);
       if (!explosion.update()) {
         explosions.remove(explosion);
+      } else {
+        explosion.draw();
       }
-      explosion.draw();
     }
     if (waveNumber > 2 & (numMeteors-numSpawned) > 1) { 
        if ((int)random(1, ENEMY_SPAWN_CHANCE + 1) == 1) {
@@ -117,14 +118,15 @@ final class Wave {
         removeEnemy(enemy);
         i--;
         continue;
-      }
-      Meteor meteor = enemy.move(WAVE_GRAVITY);
-      enemy.draw();
-      if (meteor != null) {
-        meteors.add(meteor);
+      } else {
+        Meteor meteor = enemy.move(WAVE_GRAVITY);
+        enemy.draw();
+        if (meteor != null) {
+          meteors.add(meteor);
+        }
       }
     }
-    if (meteors.size() <= 0 & enemies.size() <= 0) {
+    if (meteors.size() <= 0 & enemies.size() <= 0 & smartBombs.size() <= 0) {
       return false;
     }
     for (int i = 0; i < meteors.size(); i++) {

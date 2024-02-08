@@ -1,19 +1,24 @@
-// Make game graphics with Piskel
+// https://www.retrogamedeconstructionzone.com/2019/11/missilie-command-deep-dive.html 
 
 // Game element sizes
 final int PROJECTILE_HEIGHT_PROPORTION = 200;
 final int BALLISTA_WIDTH_PROPORTION = 10;
 final int BALLISTA_HEIGHT_PROPORTION = 20;
 final int CITY_HEIGHT_PROPORTION = 30;
+
+//Score values
+final int CITY_SCORE_VALUE = 100;
 final int METEOR_SCORE_VALUE = 25;
 final int ENEMY_SCORE_VALUE = 100;
+final int AMMO_SCORE_VALUE = 5;
+final int SMART_BOMB_SCORE_VALUE = 125;
 final int CITY_RESTORATION_COST = 10000;
-int projectileRadius;
 
 // Stage Physics 
 final float AIR_DENSITY = 1.22; 
 
 // Game Elements
+int projectileRadius;
 Wave wave;
 Ballista[] ballistae = new Ballista[3];
 City[] cities = new City[6];
@@ -91,12 +96,21 @@ void setup() {
 }
 void startNewWave() {
   boolean checkLost = true;
+  if (waveNumber > 1) {
     for (City city:cities) {
       if (city.isSurviving()) {
+        addScore(CITY_SCORE_VALUE);
         checkLost = false;
-        break;
       }
     }
+    for(Ballista ballista:ballistae) {
+      if (!ballista.isDisabled()) {
+        addScore(AMMO_SCORE_VALUE * ballista.getNumProjectiles());
+      }
+    }
+  } else {
+    checkLost = false;
+  }
   hasLost = checkLost;
   if (wave != null) {
     score += wave.endWave() * scoreMultiplier;
@@ -155,28 +169,23 @@ void printWaveData() {
 }
 void render() {
   background(0);
-  boolean remainingBallistae = false;
   for (int i = 0; i < ballistae.length; i++) {
     if (i == selectedBallista) {
       ballistae[i].draw(crossHair.getPosition());
     } else {
       ballistae[i].draw();
     }
-    if (!ballistae[i].isDisabled()) {
-      remainingBallistae = true;
-    }
   }
   boolean remainingCities = false;
   for (int i = 0; i < cities.length; i++) {
     cities[i].draw();
-    if (!remainingBallistae) {
-      if (cities[i].isSurviving()) {
-        remainingCities = true;
-      }
+    if (cities[i].isSurviving()) {
+      remainingCities = true;
     }
   }
-  if (!remainingCities & !remainingBallistae) {
+  if (!remainingCities) {
     hasLost = true;
+    return;
   }
   for (int i = 0; i < explosions.size(); i++) {
     Explosion explosion = explosions.get(i);
@@ -208,7 +217,7 @@ void render() {
         }
         if (explosion.isSmartBombInRadius(smartBomb)) {
           wave.removeSmartBomb(smartBomb);
-          addScore(METEOR_SCORE_VALUE*2); //TODO: Check spec for score value
+          addScore(SMART_BOMB_SCORE_VALUE);
           j--;
           explosions.add(new Explosion((int)bombPosition.x, (int)bombPosition.y));
         }

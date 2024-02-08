@@ -6,7 +6,6 @@ final class Ballista {
   final int TRAJECTORY_LINE_WEIGHT = 2;
   final int TRAJECTORY_DISPLAY_HEIGHT = displayHeight/2;
   final int PROJECTILE_MASS = 20;
-  final int REMAINING_AMMO_SCORE = 5;
   final int NUM_PROJECTILES = 10;
   boolean isDisabled = false;
   int numProjectiles = 10;
