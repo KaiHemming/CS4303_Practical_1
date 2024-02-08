@@ -1,7 +1,7 @@
 // Make game graphics with Piskel
 
 // Game element sizes
-final int PROJECTILE_HEIGHT_PROPORTION = 300;
+final int PROJECTILE_HEIGHT_PROPORTION = 200;
 final int BALLISTA_WIDTH_PROPORTION = 10;
 final int BALLISTA_HEIGHT_PROPORTION = 20;
 final int CITY_HEIGHT_PROPORTION = 30;
@@ -28,11 +28,10 @@ boolean hasStarted = false;
 LoseScreen loseScreen = new LoseScreen();
 TitleScreen titleScreen = new TitleScreen();
 int spentScore;
-boolean mouseDisabled = false;
 
 // Wave values
 int waveNumber = 1;
-int numMeteors = 5;
+int numMeteors = 10;
 int spawnerTicks = 400;
 int maxSpawnsPerTick = 2;
 int yVelocityVariance = 0;
@@ -46,7 +45,6 @@ void reset() {
   spawnerTicks = 400;
   maxSpawnsPerTick = 2;
   yVelocityVariance = 0;
-  score = 0;
   scoreMultiplier = 1;
   spentScore = 0;
   hasLost = false;
@@ -82,6 +80,7 @@ void reset() {
   
   // Start first wave
   startNewWave();
+  score = 0;
 }
 
 void setup() {
@@ -116,9 +115,11 @@ void startNewWave() {
   if (waveNumber <= 10) {
     numMeteors += (10-waveNumber)/2;
     yVelocityVariance++;
-    if (waveNumber%3 == 1) {
-      spawnerTicks -= 20;
+    if (waveNumber%5 == 1) {
       maxSpawnsPerTick++;
+    }
+    if (waveNumber%2 == 1) {
+      spawnerTicks-= 5;
     }
   } else {
     numMeteors+=3;
@@ -150,6 +151,7 @@ void printWaveData() {
   println("spawnerTicks: ", spawnerTicks);
   println("maxSpawnsPerTick: ", maxSpawnsPerTick);
   println("yVelocityVariance: ", yVelocityVariance);
+  println("scoreMultiplier: ", scoreMultiplier);
 }
 void render() {
   background(0);
@@ -193,13 +195,33 @@ void render() {
           explosions.add(new Explosion((int)meteorPosition.x, (int)meteorPosition.y));
         }
       }
+      ArrayList<SmartBomb> smartBombs = wave.getSmartBombs();
+      for (int j = 0; j < smartBombs.size(); j++) {
+        SmartBomb smartBomb = smartBombs.get(j);
+        PVector bombPosition = smartBomb.getPosition().copy();
+        if (explosion.isSmartBombInJumpRadius(smartBomb)) {
+          if (explosion.position.x - bombPosition.x > 0) {
+            smartBomb.jolt(-1);
+          } else {
+            smartBomb.jolt(1);
+          }
+        }
+        if (explosion.isSmartBombInRadius(smartBomb)) {
+          wave.removeSmartBomb(smartBomb);
+          addScore(METEOR_SCORE_VALUE*2); //TODO: Check spec for score value
+          j--;
+          explosions.add(new Explosion((int)bombPosition.x, (int)bombPosition.y));
+        }
+      }
       ArrayList<Enemy> enemies = wave.getEnemies();
       for (int j = 0; j < enemies.size(); j++) {
         Enemy enemy = enemies.get(j);
         if (explosion.isEnemyInRadius(enemy)) {
+          PVector enemyPosition = enemy.getPosition().copy();
           wave.removeEnemy(enemy);
           addScore(ENEMY_SCORE_VALUE);
           j--;
+          explosions.add(new Explosion((int)enemyPosition.x, (int)enemyPosition.y));
         }
       }
     }
@@ -208,10 +230,7 @@ void render() {
   if (!wave.spawnerTrigger() & !wave.draw(AIR_DENSITY)) {
     startNewWave();
   }
-  
-  if (!mouseDisabled) {
-    crossHair.setPos(mouseX, mouseY);
-  }
+  crossHair.setPos(mouseX, mouseY);
   crossHair.draw() ;
   
   for (int i = 0; i < playerMissiles.size(); i++) {
@@ -236,8 +255,6 @@ void draw() {
   else {
     render();
   }
- }
- void detectMeteorsInExplosionRadius() {
  }
  void explodePlayerMissile() {
    if (playerMissiles.size() > 0) {
@@ -275,9 +292,6 @@ void draw() {
      }
    }
  }
- void mouseMoved() {
-   mouseDisabled = false;
- }
  void keyPressed() {
   switch (key) {
     case '1':
@@ -293,7 +307,6 @@ void draw() {
       selectedBallista = 2;
       break;
     case ' ':
-      explodePlayerMissile();
       if (hasLost) {
         reset();
       }

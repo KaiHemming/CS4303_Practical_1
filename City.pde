@@ -29,10 +29,8 @@ final class City {
   
   void draw() {
     if (isSurviving) {
-      stroke(#FFFFFF);
       fill(CITY_COLOUR);
       rect(position.x, position.y, width, height);
-      noStroke();
     }
   }
   

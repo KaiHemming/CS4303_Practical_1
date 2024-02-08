@@ -14,6 +14,11 @@ class Enemy {
     this.isMovingLeft = isMovingLeft;
   }
   
+  // Returns position relative to size
+  PVector getPosition() {
+    return new PVector(position.x+width/2, position.y+height/2);
+  }
+  
   void draw() {}
   
   boolean hasFinished() {

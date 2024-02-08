@@ -1,6 +1,6 @@
 final class Wave {
   // Chances are 1 in ___
-  final int ENEMY_SPAWN_CHANCE = 100; // TODO: Set to 2000
+  final int ENEMY_SPAWN_CHANCE = 2000;
   final int SPLIT_CHANCE = 1000;
   
   final float WAVE_GRAVITY = 0.01;
@@ -43,12 +43,20 @@ final class Wave {
     return enemies;
   }
   
+  ArrayList<SmartBomb> getSmartBombs() {
+    return smartBombs;
+  }
+  
   void removeMeteor(Meteor meteor) {
     meteors.remove(meteor);
   }
   
   void removeEnemy(Enemy enemy) {
     enemies.remove(enemy);
+  }
+  
+  void removeSmartBomb(SmartBomb smartBomb) {
+    smartBombs.remove(smartBomb);
   }
   
   // Returns false if there are no more meteors to spawn.
@@ -85,7 +93,7 @@ final class Wave {
     if (waveNumber > 2 & meteors.size() > 0) {
       int chance = (int)random(1,SPLIT_CHANCE + 1);
       if (chance == 1) { 
-        Meteor meteor = meteors.get((int)random(0, meteors.size()-1));
+        Meteor meteor = meteors.get((int)random(0, meteors.size()));
         ArrayList<Meteor> splits = meteor.split(WAVE_GRAVITY);
         meteors.remove(meteor);
         meteors.addAll(splits);
@@ -98,7 +106,7 @@ final class Wave {
       }
       explosion.draw();
     }
-    if (waveNumber > 0 & (numMeteors-numSpawned) > 1) { //TODO: waveNumber > 2
+    if (waveNumber > 2 & (numMeteors-numSpawned) > 1) { 
        if ((int)random(1, ENEMY_SPAWN_CHANCE + 1) == 1) {
          spawnEnemy();
        }
@@ -185,10 +193,6 @@ final class Wave {
   }
   
   int endWave() {
-    // Check if 10k points
-    //for (City city:cities) {
-    //  city.setSurviving(true);
-    //}
     for (Ballista ballista:ballistae) {
       ballista.reset();
     }

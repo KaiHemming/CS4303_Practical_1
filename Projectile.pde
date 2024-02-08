@@ -1,10 +1,10 @@
 class Projectile { 
   final int TRAIL_STROKE_MULTIPLIER = 1; //Multiplies based on missileRadius
   final float DRAG_COEFFICIENT = 0.05;
-  final int TRAJECTORY_UPDATE_FREQ = 5;
+  final int TRAJECTORY_UPDATE_FREQ = 3;
   float gravitationalForce = 0.05;
   color trajectoryColour = #FFFFFF;
-  //color projectileColour =  TODO
+  color projectileColour = #FF0000;
   int trajectoryUpdateCount = 0;
   ArrayList<PVector> trajectory = new ArrayList<PVector>(); // For drawing trajectory line
   PVector position;
@@ -47,7 +47,7 @@ class Projectile {
     line(endPos.x, endPos.y, position.x, position.y);
     
     ellipseMode(RADIUS);
-    fill(#FF0000);
+    fill(projectileColour);
     ellipse(position.x, position.y, missileRadius, missileRadius);
     noStroke();
     
@@ -65,13 +65,11 @@ class Projectile {
   // Reference area of projectiles is all the same, not included in equation.
   PVector calculateDrag(float AIR_DENSITY) {
     float speed = velocity.mag();
-    //println("s:", speed);
     float dragMagnitude = (DRAG_COEFFICIENT * speed * speed)/AIR_DENSITY;
     
     PVector drag = velocity.copy();
     drag.mult(-1);
     drag.setMag(dragMagnitude);
-    //println("d:",drag);
     return drag;
   }
   
@@ -85,12 +83,9 @@ class Projectile {
   
   // Returns true if not out of play area
   boolean move(float AIR_DENSITY) {
-    
     applyForce(calculateDrag(AIR_DENSITY));
     PVector gravity = new PVector(0, gravitationalForce*mass);
     applyForce(gravity);
-    //println("a:",acceleration);
-    //println("v:",velocity);
    
     velocity.add(acceleration);
     position.add(velocity);
