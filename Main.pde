@@ -1,5 +1,3 @@
-// https://www.retrogamedeconstructionzone.com/2019/11/missilie-command-deep-dive.html 
-
 // Game element sizes
 final int PROJECTILE_HEIGHT_PROPORTION = 200;
 final int BALLISTA_WIDTH_PROPORTION = 10;
@@ -15,7 +13,7 @@ final int SMART_BOMB_SCORE_VALUE = 125;
 final int CITY_RESTORATION_COST = 10000;
 
 // Stage Physics 
-final float AIR_DENSITY = 1.22; 
+final float AIR_DENSITY = 0.8; 
 
 // Game Elements
 int projectileRadius;
@@ -44,13 +42,19 @@ int yVelocityVariance = 0;
 // Inputs
 int selectedBallista = 1;
 
+// Added after second playtest, refactored code to use this function.
+void setScoreMultiplier(int scoreMultiplier) {
+  this.scoreMultiplier = scoreMultiplier;
+  hud.setScoreMultiplier(scoreMultiplier);
+}
+
 void reset() {
   waveNumber = 1;
   numMeteors = 5;
   spawnerTicks = 400;
   maxSpawnsPerTick = 2;
   yVelocityVariance = 0;
-  scoreMultiplier = 1;
+  setScoreMultiplier(1);
   spentScore = 0;
   hasLost = false;
   hasStarted = true;
@@ -113,13 +117,16 @@ void startNewWave() {
   }
   hasLost = checkLost;
   if (wave != null) {
-    score += wave.endWave() * scoreMultiplier;
+    int scoreAddition = wave.endWave();
+    addScore(scoreAddition);
+    //After first playtest added wave indicator
+    hud.indicateWaveEnd(scoreAddition, "Wave " + waveNumber);
   }
   if (waveNumber % 2 == 1
-      & waveNumber < 10 
+      & waveNumber < 12 
       & waveNumber > 1) {
         
-    scoreMultiplier++;
+    setScoreMultiplier(scoreMultiplier+1);
   }
   // Start Wave
   wave = new Wave(numMeteors, spawnerTicks, maxSpawnsPerTick, yVelocityVariance, cities, ballistae);
@@ -154,7 +161,7 @@ void startNewWave() {
     }
   }
 }
-
+// Returns added score after applying multiplier.
 void addScore(int addition) {
   score += addition * scoreMultiplier; 
 }

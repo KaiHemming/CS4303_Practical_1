@@ -8,10 +8,13 @@ class Enemy {
   int width = displayWidth/30;
   int height = displayHeight/60;
   boolean isMovingLeft;
+  int waveNumber; // Added after first playtest, code refactored
   
-  Enemy(int x, int y, boolean isMovingLeft) {
-    position = new PVector(x, y);
+  Enemy(int x, int y, boolean isMovingLeft, int waveNumber) {
+    int newY = y + constrain((waveNumber*10)-10, 0, 300); //Added after first playtest
+    position = new PVector(x, newY);
     this.isMovingLeft = isMovingLeft;
+    this.waveNumber = waveNumber;
   }
   
   // Returns position relative to size
@@ -35,6 +38,7 @@ class Enemy {
     } else {
       position.x += displayWidth/MOVE_INCREMENT_PROPORTION;
     }
+    int adjustedShotChance = constrain(waveNumber*50, 50, SHOT_CHANCE); // Added after first playtest
     if ((int)random(1,SHOT_CHANCE+1) == 1) {
       return spawnMeteor(waveGravity);
     }

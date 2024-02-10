@@ -62,10 +62,10 @@ class Projectile {
   // calculateDrag() code from
   // https://processing.org/examples/forceswithvectors.html
   // Made my own changes: Divide by AIR_DENSITY
-  // Reference area of projectiles is all the same, not included in equation.
+  //                       Reference area of projectiles is all the same, not included in equation.
   PVector calculateDrag(float AIR_DENSITY) {
     float speed = velocity.mag();
-    float dragMagnitude = (DRAG_COEFFICIENT * speed * speed)/AIR_DENSITY;
+    float dragMagnitude = DRAG_COEFFICIENT * speed * speed * AIR_DENSITY;
     
     PVector drag = velocity.copy();
     drag.mult(-1);

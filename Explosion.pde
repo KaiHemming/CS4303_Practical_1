@@ -27,7 +27,7 @@ final class Explosion {
   void draw() {
     if (currentTicks <= EXPLOSION_TICKS) {
       ellipseMode(RADIUS);
-      fill(colour, transparency);
+      fill(colour, constrain(transparency, 10, 255));
       ellipse(position.x, position.y, currentRadius, currentRadius);
       transparency-=2;
     }

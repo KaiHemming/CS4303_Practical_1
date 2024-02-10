@@ -1,7 +1,7 @@
 final class Wave {
   // Chances are 1 in ___
-  final int ENEMY_SPAWN_CHANCE = 2000;
-  final int SPLIT_CHANCE = 1000;
+  final int ENEMY_SPAWN_CHANCE_MAX = 2000;
+  final int SPLIT_CHANCE_MAX = 1500;
   
   final float WAVE_GRAVITY = 0.01;
   final int XVELOCITY_VARIANCE = 5;
@@ -24,6 +24,8 @@ final class Wave {
   int spawnerTicks;
   int currentSpawnerTicks;
   int maxSpawnsPerTick;
+  int enemySpawnChance;
+  int meteorSplitChance;
   
   Wave(int numMeteors, int spawnerTicks, int maxSpawnsPerTick, int yVelocityVariance, City[] cities, Ballista[] ballistae) {
     this.cities = cities;
@@ -33,6 +35,10 @@ final class Wave {
     this.maxSpawnsPerTick = maxSpawnsPerTick;
     this.currentSpawnerTicks = spawnerTicks - SPAWN_DELAY;
     this.yVelocityVariance = yVelocityVariance;
+    this.enemySpawnChance = ENEMY_SPAWN_CHANCE_MAX - constrain(((waveNumber-1) * 100), 0, 1000);
+    this.meteorSplitChance = SPLIT_CHANCE_MAX - constrain(((waveNumber-1) * 100), 0, 1000);
+    System.out.println("enemySpawnChance: 1 in " + enemySpawnChance);
+    System.out.println("meteorSplitChance: 1 in " + meteorSplitChance);
   }
   
   ArrayList<Meteor> getMeteors() {
@@ -91,10 +97,11 @@ final class Wave {
   // true if things to draw
   boolean draw(float AIR_DENSITY) {
     if (waveNumber > 2 & meteors.size() > 0) {
-      int chance = (int)random(1,SPLIT_CHANCE + 1);
+      int chance = (int)random(1, meteorSplitChance + 1);
       if (chance == 1) { 
         Meteor meteor = meteors.get((int)random(0, meteors.size()));
-        ArrayList<Meteor> splits = meteor.split(WAVE_GRAVITY);
+        int numSplits = (int) random(2, constrain(waveNumber/2,1,3) + 1); //Changed numSplits to scale with waveNumber after first playtest
+        ArrayList<Meteor> splits = meteor.split(WAVE_GRAVITY, numSplits);
         meteors.remove(meteor);
         meteors.addAll(splits);
       }
@@ -108,7 +115,7 @@ final class Wave {
       }
     }
     if (waveNumber > 2 & (numMeteors-numSpawned) > 1) { 
-       if ((int)random(1, ENEMY_SPAWN_CHANCE + 1) == 1) {
+       if ((int)random(1, enemySpawnChance + 1) == 1) {
          spawnEnemy();
        }
     }
@@ -195,10 +202,11 @@ final class Wave {
   }
   
   int endWave() {
+    int score = calculateScore(); //After second play test, fixed bug where ballista ammo score is also max.
     for (Ballista ballista:ballistae) {
       ballista.reset();
     }
-    return calculateScore();
+    return score;
   }
   
   void spawnEnemy() {
@@ -211,14 +219,20 @@ final class Wave {
       isMovingLeft = false;
       x = 0;
     }
-    int r = (int)random(1,4);
+    int enemySelector;
+    if (waveNumber > 5) { // Smart Bombs spawn from wave 5 onwards
+      enemySelector = 4;
+    } else {
+      enemySelector = 3;
+    }
+    int r = (int)random(1, enemySelector);
     switch (r) {
       case 1:
-        Satellite satellite = new Satellite(x, ENEMY_SPAWN_HEIGHT, isMovingLeft);
+        Satellite satellite = new Satellite(x, ENEMY_SPAWN_HEIGHT, isMovingLeft, waveNumber);
         enemies.add(satellite);
         break;
       case 2:
-        Bomber bomber = new Bomber(x, displayHeight/3, isMovingLeft);
+        Bomber bomber = new Bomber(x, ENEMY_SPAWN_HEIGHT, isMovingLeft, waveNumber);
         enemies.add(bomber);
         break;
       case 3:
